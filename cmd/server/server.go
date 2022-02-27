@@ -7,6 +7,7 @@ import (
 	"github.com/eskokado/fc2-grpc/pb"
 	"github.com/eskokado/fc2-grpc/services"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 
 	pb.RegisterUserServiceServer(grpcServer, services.NewUserService())
 
+	reflection.Register(grpcServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Could not serve: %v", err)
