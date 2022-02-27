@@ -87,7 +87,7 @@ func (*UserService) AddUsers(stream pb.UserService_AddUsersServer) error {
 			})
 		}
 		if err != nil {
-			fmt.Println("Error receiving stream: %v", err)
+			log.Fatalf("Error receiving stream: %v", err)
 		}
 		users = append(users, &pb.User{
 			Id: req.GetId(),
