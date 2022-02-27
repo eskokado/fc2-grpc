@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/eskokado/fc2-grpc/pb"
@@ -70,6 +71,30 @@ func (*UserService) AddUserVerbose(req *pb.User, stream pb.UserService_AddUserVe
 	})
 
 	time.Sleep(time.Second * 3)
+
+	return nil
+}
+
+func (*UserService) AddUsers(stream pb.UserService_AddUsersServer) error {
+	users := []*pb.User{}
+
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&pb.Users {
+				Users: users, 
+			})
+		}
+		if err != nil {
+			fmt.Println("Error receiving stream: %v", err)
+		}
+		users = append(users, &pb.User{
+			Id: req.GetId(),
+			Name: req.GetName(),
+			Email: req.GetEmail(),
+		})
+		fmt.Println("Adding", req.GetName())
+	}
 
 	return nil
 }
